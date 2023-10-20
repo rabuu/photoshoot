@@ -1,6 +1,6 @@
 use glam::Vec2;
 
-pub struct VerletObject {
+pub struct Object {
     pub pos: Vec2,
     prev_pos: Vec2,
     acc: Vec2,
@@ -8,7 +8,7 @@ pub struct VerletObject {
     pub radius: f32,
 }
 
-impl VerletObject {
+impl Object {
     pub fn new_at_origin(radius: f32) -> Self {
         Self {
             pos: Vec2::ZERO,
@@ -37,7 +37,7 @@ impl VerletObject {
 }
 
 pub struct Solver {
-    pub objects: Vec<VerletObject>,
+    pub objects: Vec<Object>,
     pub gravity: Vec2,
 }
 

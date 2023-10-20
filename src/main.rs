@@ -1,6 +1,6 @@
 use std::fs;
 
-mod verlet;
+mod physics;
 
 // fn main() -> Result<(), Box<dyn std::error::Error>> {
 //     let image = format!("{}/image.jpg", std::env!("CARGO_MANIFEST_DIR"));
@@ -39,7 +39,7 @@ fn main() {
 
 struct Model {
     _win: WindowId,
-    solver: verlet::Solver,
+    solver: physics::Solver,
 }
 
 impl Model {
@@ -52,9 +52,9 @@ impl Model {
             .build()
             .unwrap();
 
-        let solver = verlet::Solver {
-            objects: vec![verlet::VerletObject::new_at_origin(20.0)],
-            gravity: glam::Vec2::new(0.0, -2.0),
+        let solver = physics::Solver {
+            objects: vec![physics::VerletObject::new_at_origin(20.0)],
+            gravity: glam::Vec2::new(0.0, -98.1),
         };
 
         Model { _win, solver }
@@ -79,5 +79,5 @@ fn view(app: &App, model: &Model, frame: Frame) {
 
 fn update(_app: &App, model: &mut Model, update: Update) {
     let dt = update.since_last;
-    model.solver.update(dt.as_secs_f32() * 10.);
+    model.solver.update(dt.as_secs_f32());
 }
