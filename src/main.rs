@@ -52,10 +52,20 @@ impl Model {
             .build()
             .unwrap();
 
-        let solver = physics::Solver {
-            objects: vec![physics::VerletObject::new_at_origin(20.0)],
-            gravity: glam::Vec2::new(0.0, -98.1),
-        };
+        let solver = physics::Solver::new(
+            vec![
+                physics::Object::new_at_origin(20.0),
+                physics::Object::new(5.0, glam::Vec2::new(0.0, 30.0)),
+                physics::Object::new(5.0, glam::Vec2::new(0.0, 40.0)),
+                physics::Object::new(5.0, glam::Vec2::new(0.0, 50.0)),
+                physics::Object::new(5.0, glam::Vec2::new(0.0, 60.0)),
+                physics::Object::new(5.0, glam::Vec2::new(0.0, 70.0)),
+                physics::Object::new(5.0, glam::Vec2::new(0.0, 80.0)),
+                physics::Object::new(5.0, glam::Vec2::new(0.0, 90.0)),
+                physics::Object::new(5.0, glam::Vec2::new(0.0, 100.0)),
+            ],
+            glam::Vec2::new(0.0, -98.1),
+        );
 
         Model { _win, solver }
     }
@@ -68,6 +78,8 @@ fn view(app: &App, model: &Model, frame: Frame) {
     draw.rect().width(800.0).height(750.0).color(BLACK);
 
     for obj in &model.solver.objects {
+        let obj = obj.borrow();
+
         draw.ellipse()
             .x_y(obj.pos.x, obj.pos.y)
             .radius(obj.radius)
