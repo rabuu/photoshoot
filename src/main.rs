@@ -1,7 +1,6 @@
-use std::fs;
+use photoshoot::physics;
 
-mod physics;
-
+// use std::fs;
 // fn main() -> Result<(), Box<dyn std::error::Error>> {
 //     let image = format!("{}/image.jpg", std::env!("CARGO_MANIFEST_DIR"));
 //     let image = image::io::Reader::open(&image)?.decode()?;
