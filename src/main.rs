@@ -1,36 +1,31 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let black = std::cell::OnceCell::new();
-    let _ = black.set(photoshoot::rgb::BLACK);
+    let img = image::open(&format!("{}/image.jpg", env!("CARGO_MANIFEST_DIR")))?.into_rgb8();
 
-    let mut photos = Vec::new();
+    // TODO: bounds check
+    let width = img.width() as u16;
+    let height = img.height() as u16;
 
-    for i in (0..300).step_by(10) {
-        let photo: photoshoot::Photo = photoshoot::Photo::new(
-            300,
-            300,
-            photoshoot::rgb::WHITE,
-            vec![photoshoot::ObjectSnapshot {
-                radius: 30.0,
-                pos: glam::Vec2::new(i as f32, i as f32),
-                color: std::rc::Rc::new(black.clone()),
-            }],
-        );
+    let mut photoshoot = photoshoot::Photoshoot::new(
+        img,
+        photoshoot::rgb::WHITE,
+        1.0 / 60.0,
+        8,
+        photoshoot::Gravity::new(900.81),
+    )
+    .unwrap();
 
-        photos.push(photo);
-    }
-
-    let photos_rev = photos.clone().into_iter().skip(1).rev();
-
-    let _ = photos.pop();
+    let photos = photoshoot.shoot();
 
     let mut gif = std::fs::File::create("gif.gif").unwrap();
-    let mut enc = gif::Encoder::new(&mut gif, 300, 300, &[]).unwrap();
+    let mut enc = gif::Encoder::new(&mut gif, width, height, &[]).unwrap();
 
-    enc.set_repeat(gif::Repeat::Infinite).unwrap();
+    enc.set_repeat(gif::Repeat::Finite(1)).unwrap();
 
-    for photo in photos.into_iter().chain(photos_rev) {
+    let count = photos.len();
+    for (i, photo) in photos.into_iter().enumerate() {
         let frame = photo.into();
         enc.write_frame(&frame).unwrap();
+        eprintln!("Wrote frame {}/{count}.", i + 1);
     }
 
     Ok(())
