@@ -1,11 +1,15 @@
 use image::RgbImage;
 
 use object::Object;
-use photo::Photo;
+
+// FIXME: public API
+pub use object::ObjectSnapshot;
+pub use photo::Photo;
+pub use rgb::Rgb;
 
 mod object;
 mod photo;
-mod rgb;
+pub mod rgb;
 
 /// Main type that runs the photoshoot
 pub struct Photoshoot {

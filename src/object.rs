@@ -25,8 +25,9 @@ impl Object {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct ObjectSnapshot {
-    radius: f32,
-    pos: Vec2,
-    color: Rc<OnceCell<Rgb>>,
+    pub radius: f32,
+    pub pos: Vec2,
+    pub color: Rc<OnceCell<Rgb>>,
 }
