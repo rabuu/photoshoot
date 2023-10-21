@@ -2,6 +2,7 @@ use glam::Vec2;
 use image::RgbImage;
 use itertools::Itertools;
 
+use canon::Canon;
 use object::Object;
 
 // FIXME: public API
@@ -10,6 +11,7 @@ pub use object::ObjectSnapshot;
 pub use photo::Photo;
 pub use rgb::Rgb;
 
+mod canon;
 mod gravity;
 mod object;
 mod photo;
@@ -20,10 +22,12 @@ pub struct Photoshoot {
     img: RgbImage,
     background: Rgb,
     frame_rate: f32,
+    gif_speed: u8,
     substeps: usize,
     gravity: Gravity,
 
     objects: Vec<Object>,
+    canon: Canon,
 }
 
 impl Photoshoot {
@@ -31,27 +35,40 @@ impl Photoshoot {
         img: RgbImage,
         background: Rgb,
         frame_rate: f32,
+        gif_speed: u8,
         substeps: usize,
         gravity: Gravity,
+        radius: f32,
     ) -> Option<Self> {
+        let center = Vec2::new(img.width() as f32 / 2.0, img.height() as f32 / 2.0);
+
         Some(Self {
             img,
             background,
             frame_rate,
+            gif_speed,
             substeps,
             gravity,
             objects: Vec::new(),
+            canon: Canon::new(
+                radius,
+                center,
+                Vec2::new(2., 0.0),
+                Some(Vec2::new(1.0, 0.1)),
+            ),
         })
     }
 
-    pub fn shoot(&mut self) -> Vec<Photo> {
-        let radius = 4.0;
-        let acc = Vec2::new(1.0, 2.0);
+    pub fn run(&mut self) -> Vec<Photo> {
+        let count = self.img.width() as usize * self.img.height() as usize;
 
-        let mut photos = Vec::with_capacity(100);
-        for i in (0..1000).step_by(10) {
-            let pos = Vec2::new(i as f32, self.img.height() as f32 / 2.0);
-            self.objects.push(Object::new(radius, pos, acc));
+        let mut photos = Vec::new();
+        for i in (0..count).step_by(8000) {
+            eprintln!("Simulating {}/{count}", i + 1);
+
+            if let Some(obj) = self.canon.shoot(&self.objects) {
+                self.objects.push(obj);
+            }
 
             self.step();
             photos.push(self.photo());
@@ -70,6 +87,7 @@ impl Photoshoot {
             self.img.width() as u16,
             self.img.height() as u16,
             self.background,
+            self.gif_speed,
             self.objects.iter().map(Object::snapshot).collect(),
         )
     }

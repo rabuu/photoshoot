@@ -9,12 +9,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         img,
         photoshoot::rgb::WHITE,
         1.0 / 60.0,
+        30,
         8,
         photoshoot::Gravity::new(900.81),
+        10.0,
     )
     .unwrap();
 
-    let photos = photoshoot.shoot();
+    let photos = photoshoot.run();
 
     let mut gif = std::fs::File::create("gif.gif").unwrap();
     let mut enc = gif::Encoder::new(&mut gif, width, height, &[]).unwrap();

@@ -9,15 +9,25 @@ pub struct Photo {
     width: u16,
     height: u16,
     background: Rgb,
+    /// `speed` is in the range [1, 30]
+    speed: u8,
     objects: Vec<ObjectSnapshot>,
 }
 
 impl Photo {
-    pub fn new(width: u16, height: u16, background: Rgb, objects: Vec<ObjectSnapshot>) -> Self {
+    pub fn new(
+        width: u16,
+        height: u16,
+        background: Rgb,
+        speed: u8,
+        objects: Vec<ObjectSnapshot>,
+    ) -> Self {
+        let speed = speed.clamp(1, 30);
         Self {
             width,
             height,
             background,
+            speed,
             objects,
         }
     }
@@ -46,6 +56,6 @@ impl Into<gif::Frame<'_>> for Photo {
             }
         }
 
-        gif::Frame::from_rgb(self.width, self.height, &pixels)
+        gif::Frame::from_rgb_speed(self.width, self.height, &pixels, self.speed as i32)
     }
 }

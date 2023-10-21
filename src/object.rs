@@ -16,12 +16,12 @@ pub struct Object {
 }
 
 impl Object {
-    pub fn new(radius: f32, pos: Vec2, acc: Vec2) -> Self {
+    pub fn new(radius: f32, pos: Vec2, pos_prev: Vec2) -> Self {
         Self {
             radius,
             pos: RefCell::new(pos),
-            pos_prev: pos,
-            acc,
+            pos_prev,
+            acc: Vec2::ZERO,
             color: Rc::new(OnceCell::new()),
         }
     }
