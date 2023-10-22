@@ -10,8 +10,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         photoshoot::rgb::WHITE,
         1.0 / 60.0,
         30,
-        3,
+        10,
         photoshoot::Gravity::new(900.81),
+        1.0,
     )
     .unwrap();
 
@@ -27,12 +28,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     for (i, photo) in photos.into_iter().enumerate() {
         let frame = photo.into();
         enc.write_frame(&frame).unwrap();
-        eprintln!("Wrote frame {}/{count}.", i + 1);
+        eprint!("\rWrote frame {}/{count}.", i + 1);
     }
+    eprintln!();
 
     let last_frame = last_photo.into();
-    eprintln!("Last frame!");
-    for _ in 0..10 {
+    eprintln!("Last frame...");
+    for _ in 0..100 {
         enc.write_frame(&last_frame).unwrap();
     }
 

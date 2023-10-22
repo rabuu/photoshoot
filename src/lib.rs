@@ -38,6 +38,7 @@ impl Photoshoot {
         gif_speed: u8,
         substeps: usize,
         gravity: Gravity,
+        radius: f32,
     ) -> Option<Self> {
         let center = Vec2::new(img.width() as f32 / 2.0, img.height() as f32 / 2.0);
 
@@ -49,7 +50,7 @@ impl Photoshoot {
             substeps,
             gravity,
             objects: Vec::new(),
-            canon: Canon::new(2.0, center, CanonMode::default()),
+            canon: Canon::new(radius, center, CanonMode::default()),
         })
     }
 
@@ -62,7 +63,7 @@ impl Photoshoot {
         let mut missed = 0;
 
         for i in 0.. {
-            eprintln!("Click! [{}]", i + 1);
+            eprint!("\rClick! [{}]", i + 1);
 
             let (full, maybe_object) = self.canon.shoot(&self.objects);
 
@@ -89,6 +90,7 @@ impl Photoshoot {
             self.step();
             photos.push(self.photo());
         }
+        eprintln!();
 
         // colorize objects
         eprintln!("Colorizing...");
