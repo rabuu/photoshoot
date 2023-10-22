@@ -19,7 +19,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let photos = photoshoot.run();
     let last_photo = photos.last().unwrap().clone();
 
-    let mut gif = std::fs::File::create("gif.gif").unwrap();
+    let mut gif = std::fs::File::create("out.gif").unwrap();
     let mut enc = gif::Encoder::new(&mut gif, width, height, &[]).unwrap();
 
     enc.set_repeat(gif::Repeat::Finite(1)).unwrap();
