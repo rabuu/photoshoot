@@ -1,5 +1,3 @@
-use glam::Vec2;
-
 use crate::object::ObjectSnapshot;
 use crate::rgb::Rgb;
 
@@ -42,8 +40,7 @@ impl Into<gif::Frame<'_>> for Photo {
                 let mut px = self.background;
 
                 for obj in &self.objects {
-                    let dist_squared = (obj.pos - Vec2::new(x as f32, y as f32)).length_squared();
-                    if dist_squared <= obj.radius * obj.radius {
+                    if obj.intersects(x as f32, y as f32) {
                         if let Some(&col) = obj.color.get() {
                             px = col;
                         }

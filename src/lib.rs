@@ -49,7 +49,7 @@ impl Photoshoot {
             substeps,
             gravity,
             objects: Vec::new(),
-            canon: Canon::new(50.0, center, CanonMode::default()),
+            canon: Canon::new(2.0, center, CanonMode::default()),
         })
     }
 
@@ -91,8 +91,34 @@ impl Photoshoot {
         }
 
         // colorize objects
+        eprintln!("Colorizing...");
         for obj in &self.objects {
-            let _ = obj.color.set(rgb::BLACK);
+            let mut count: usize = 0;
+            let mut r: f32 = 0.0;
+            let mut g: f32 = 0.0;
+            let mut b: f32 = 0.0;
+
+            for (i, px) in self.img.pixels().enumerate() {
+                let x = i % self.img.width() as usize;
+                let y = i / self.img.width() as usize;
+
+                if obj.intersects(x as f32, y as f32) {
+                    r += px.0[0] as f32 * px.0[0] as f32;
+                    g += px.0[1] as f32 * px.0[1] as f32;
+                    b += px.0[2] as f32 * px.0[2] as f32;
+                    count += 1;
+                }
+            }
+
+            if count > 0 {
+                let col = Rgb {
+                    r: (r / count as f32).sqrt() as u8,
+                    g: (g / count as f32).sqrt() as u8,
+                    b: (b / count as f32).sqrt() as u8,
+                };
+
+                obj.color.set(col).expect("Color is set just once");
+            }
         }
 
         photos

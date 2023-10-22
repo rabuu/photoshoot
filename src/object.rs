@@ -5,6 +5,7 @@ use glam::Vec2;
 
 use crate::rgb::Rgb;
 
+#[derive(Debug)]
 pub struct Object {
     pub radius: f32,
 
@@ -43,6 +44,11 @@ impl Object {
         self.acc += acc;
     }
 
+    pub fn intersects(&self, x: f32, y: f32) -> bool {
+        let dist_sq = (*self.pos.borrow() - Vec2::new(x, y)).length_squared();
+        dist_sq < self.radius * self.radius
+    }
+
     pub fn snapshot(&self) -> ObjectSnapshot {
         ObjectSnapshot {
             radius: self.radius,
@@ -70,5 +76,10 @@ impl ObjectSnapshot {
             pos: Vec2::new(x, y),
             color: Rc::new(color),
         }
+    }
+
+    pub fn intersects(&self, x: f32, y: f32) -> bool {
+        let dist_sq = (self.pos - Vec2::new(x, y)).length_squared();
+        dist_sq < self.radius * self.radius
     }
 }

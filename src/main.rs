@@ -1,5 +1,5 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let img = image::open(&format!("{}/image.jpg", env!("CARGO_MANIFEST_DIR")))?.into_rgb8();
+    let img = image::open(&format!("{}/image.png", env!("CARGO_MANIFEST_DIR")))?.into_rgb8();
 
     // TODO: bounds check
     let width = img.width() as u16;
@@ -9,8 +9,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         img,
         photoshoot::rgb::WHITE,
         1.0 / 60.0,
-        20,
-        8,
+        30,
+        3,
         photoshoot::Gravity::new(900.81),
     )
     .unwrap();
