@@ -9,14 +9,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         img,
         photoshoot::rgb::WHITE,
         1.0 / 60.0,
-        30,
+        20,
         8,
         photoshoot::Gravity::new(900.81),
-        10.0,
     )
     .unwrap();
 
     let photos = photoshoot.run();
+    let last_photo = photos.last().unwrap().clone();
 
     let mut gif = std::fs::File::create("gif.gif").unwrap();
     let mut enc = gif::Encoder::new(&mut gif, width, height, &[]).unwrap();
@@ -28,6 +28,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let frame = photo.into();
         enc.write_frame(&frame).unwrap();
         eprintln!("Wrote frame {}/{count}.", i + 1);
+    }
+
+    let last_frame = last_photo.into();
+    eprintln!("Last frame!");
+    for _ in 0..10 {
+        enc.write_frame(&last_frame).unwrap();
     }
 
     Ok(())

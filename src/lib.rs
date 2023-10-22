@@ -2,7 +2,7 @@ use glam::Vec2;
 use image::RgbImage;
 use itertools::Itertools;
 
-use canon::Canon;
+use canon::{Canon, CanonMode};
 use object::Object;
 
 // FIXME: public API
@@ -38,7 +38,6 @@ impl Photoshoot {
         gif_speed: u8,
         substeps: usize,
         gravity: Gravity,
-        radius: f32,
     ) -> Option<Self> {
         let center = Vec2::new(img.width() as f32 / 2.0, img.height() as f32 / 2.0);
 
@@ -50,24 +49,41 @@ impl Photoshoot {
             substeps,
             gravity,
             objects: Vec::new(),
-            canon: Canon::new(
-                radius,
-                center,
-                Vec2::new(2., 0.0),
-                Some(Vec2::new(1.0, 0.1)),
-            ),
+            canon: Canon::new(50.0, center, CanonMode::default()),
         })
     }
 
     pub fn run(&mut self) -> Vec<Photo> {
-        let count = self.img.width() as usize * self.img.height() as usize;
+        eprintln!("Start photoshoot...");
 
         let mut photos = Vec::new();
-        for i in (0..count).step_by(8000) {
-            eprintln!("Simulating {}/{count}", i + 1);
 
-            if let Some(obj) = self.canon.shoot(&self.objects) {
+        const ALLOWED_MISSES: usize = 10;
+        let mut missed = 0;
+
+        for i in 0.. {
+            eprintln!("Click! [{}]", i + 1);
+
+            let (full, maybe_object) = self.canon.shoot(&self.objects);
+
+            if full {
+                break;
+            }
+
+            if let Some(obj) = maybe_object {
                 self.objects.push(obj);
+                missed = 0;
+            } else {
+                missed += 1;
+            }
+
+            if missed >= ALLOWED_MISSES {
+                self.canon.mode = CanonMode::Fill {
+                    top: 0,
+                    bottom: self.img.height() as usize,
+                    left: 0,
+                    right: self.img.width() as usize,
+                };
             }
 
             self.step();
