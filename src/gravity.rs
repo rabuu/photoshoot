@@ -5,7 +5,7 @@ pub struct Gravity(f32);
 
 impl Gravity {
     pub fn new(g: f32) -> Self {
-        Self(g)
+        Self(g * 100.0)
     }
 }
 

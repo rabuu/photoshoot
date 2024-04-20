@@ -1,40 +1,101 @@
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let img = image::open(&format!("{}/image.png", env!("CARGO_MANIFEST_DIR")))?.into_rgb8();
+use std::path::PathBuf;
 
-    // TODO: bounds check
-    let width = img.width() as u16;
-    let height = img.height() as u16;
+use clap::Parser;
+
+#[derive(Debug, Parser)]
+#[command(version, about, long_about = None)]
+struct Cli {
+    /// Path to the input photo
+    photo: PathBuf,
+
+    /// Path to the output GIF
+    #[arg(short, long)]
+    output: PathBuf,
+
+    /// Frame rate of the GIF
+    #[arg(short, long, default_value_t = 0.02)]
+    frame_rate: f32,
+
+    /// Speed of the GIF
+    #[arg(long, default_value_t = 10)]
+    gif_speed: u8,
+
+    /// Simulation substeps
+    #[arg(short, long, default_value_t = 5)]
+    substeps: usize,
+
+    /// Simulation gravity
+    #[arg(long, default_value_t = 9.81)]
+    gravity: f32,
+
+    /// Radius of the canon balls
+    #[arg(short, long, default_value_t = 1.0)]
+    radius: f32,
+
+    /// Black background (default: white)
+    #[arg(short, long)]
+    black_bg: bool,
+
+    /// Should the GIF run repeat infinitely
+    #[arg(short, long)]
+    infinite: bool,
+
+    /// How much longer should the last frame be
+    #[arg(short, long, default_value_t = 50)]
+    last_frame: usize,
+}
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let cli = Cli::parse();
+
+    let photo = image::open(cli.photo)?.into_rgb8();
+
+    let width: u16 = photo.width().try_into()?;
+    let height: u16 = photo.height().try_into()?;
+
+    let bg = if cli.black_bg {
+        photoshoot::rgb::BLACK
+    } else {
+        photoshoot::rgb::WHITE
+    };
 
     let mut photoshoot = photoshoot::Photoshoot::new(
-        img,
-        photoshoot::rgb::WHITE,
-        1.0 / 60.0,
-        30,
-        10,
-        photoshoot::Gravity::new(900.81),
-        1.0,
+        photo,
+        bg,
+        cli.frame_rate,
+        cli.gif_speed,
+        cli.substeps,
+        photoshoot::Gravity::new(cli.gravity),
+        cli.radius,
     )
     .unwrap();
 
     let photos = photoshoot.run();
     let last_photo = photos.last().unwrap().clone();
 
-    let mut gif = std::fs::File::create("out.gif").unwrap();
-    let mut enc = gif::Encoder::new(&mut gif, width, height, &[]).unwrap();
+    eprintln!("Creating file {:?}...", cli.output);
+    let mut gif = std::fs::File::create_new(cli.output)?;
+    let mut enc = gif::Encoder::new(&mut gif, width, height, &[])?;
 
-    enc.set_repeat(gif::Repeat::Finite(1)).unwrap();
+    let repeat = if cli.infinite {
+        gif::Repeat::Infinite
+    } else {
+        gif::Repeat::Finite(1)
+    };
+
+    enc.set_repeat(repeat).unwrap();
 
     let count = photos.len();
     for (i, photo) in photos.into_iter().enumerate() {
         let frame = photo.into();
-        enc.write_frame(&frame).unwrap();
+        enc.write_frame(&frame)?;
         eprint!("\rWrote frame {}/{count}.", i + 1);
     }
     eprintln!();
 
     let last_frame = last_photo.into();
     eprintln!("Last frame...");
-    for _ in 0..100 {
+    for _ in 0..cli.last_frame {
         enc.write_frame(&last_frame).unwrap();
     }
 
