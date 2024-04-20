@@ -31,15 +31,15 @@ impl Photo {
     }
 }
 
-impl Into<gif::Frame<'_>> for Photo {
-    fn into(self) -> gif::Frame<'static> {
-        let mut pixels: Vec<u8> = Vec::with_capacity(self.width as usize * self.height as usize);
+impl From<Photo> for gif::Frame<'_> {
+    fn from(val: Photo) -> Self {
+        let mut pixels: Vec<u8> = Vec::with_capacity(val.width as usize * val.height as usize);
 
-        for y in 0..self.height {
-            for x in 0..self.width {
-                let mut px = self.background;
+        for y in 0..val.height {
+            for x in 0..val.width {
+                let mut px = val.background;
 
-                for obj in &self.objects {
+                for obj in &val.objects {
                     if obj.intersects(x as f32, y as f32) {
                         if let Some(&col) = obj.color.get() {
                             px = col;
@@ -53,6 +53,6 @@ impl Into<gif::Frame<'_>> for Photo {
             }
         }
 
-        gif::Frame::from_rgb_speed(self.width, self.height, &pixels, self.speed as i32)
+        gif::Frame::from_rgb_speed(val.width, val.height, &pixels, val.speed as i32)
     }
 }

@@ -9,8 +9,8 @@ impl Gravity {
     }
 }
 
-impl Into<Vec2> for Gravity {
-    fn into(self) -> Vec2 {
-        Vec2::new(0.0, self.0)
+impl From<Gravity> for Vec2 {
+    fn from(val: Gravity) -> Self {
+        Vec2::new(0.0, val.0)
     }
 }
