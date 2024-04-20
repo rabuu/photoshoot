@@ -43,6 +43,10 @@ struct Cli {
     /// How much longer should the last frame be
     #[arg(short, long, default_value_t = 50)]
     last_frame: usize,
+
+    /// Don't write to file
+    #[arg(long)]
+    dry_run: bool,
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -72,6 +76,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let photos = photoshoot.run();
     let last_photo = photos.last().unwrap().clone();
+
+    if cli.dry_run {
+        eprintln!("Exit because of dry run...");
+        return Ok(());
+    }
 
     eprintln!("Creating file {:?}...", cli.output);
     let mut gif = std::fs::File::create_new(cli.output)?;

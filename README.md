@@ -25,6 +25,7 @@ Options:
   -b, --black-bg                 Black background (default: white)
   -i, --infinite                 Should the GIF run repeat infinitely
   -l, --last-frame <LAST_FRAME>  How much longer should the last frame be [default: 50]
+      --dry-run                  Don't write to file
   -h, --help                     Print help
   -V, --version                  Print version
 ```
