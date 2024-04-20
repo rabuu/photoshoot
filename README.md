@@ -4,6 +4,7 @@ Generate a GIF of canon balls that shoot around and slowly fall in place to form
 The project is inspired by [this video](https://youtu.be/lS_qeBy3aQI?si=0QOkNiy3eRM54eK1) (especially the end).
 
 In the current state, `photoshoot` is completely unoptimizied and slow.
+Often it hangs in the end but I also had some really good results after tuning the settings.
 
 # usage
 ```console
