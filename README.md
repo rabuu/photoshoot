@@ -10,8 +10,6 @@ Often it hangs in the end but I also had some really good results after tuning t
 ```console
 $ photoshoot --output out.gif some-photo.jpg
 $ photoshoot --help
-Generate a GIF of your photo shoot
-
 Usage: photoshoot [OPTIONS] --output <OUTPUT> <PHOTO>
 
 Arguments:
@@ -20,7 +18,7 @@ Arguments:
 Options:
   -o, --output <OUTPUT>          Path to the output GIF
   -f, --frame-rate <FRAME_RATE>  Frame rate of the GIF [default: 0.02]
-      --gif-speed <GIF_SPEED>    Speed of the GIF [default: 10]
+      --gif-speed <GIF_SPEED>    Speed of the writing of the GIF [default: 10]
   -s, --substeps <SUBSTEPS>      Simulation substeps [default: 5]
       --gravity <GRAVITY>        Simulation gravity [default: 9.81]
   -r, --radius <RADIUS>          Radius of the canon balls [default: 1]

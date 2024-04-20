@@ -16,7 +16,7 @@ struct Cli {
     #[arg(short, long, default_value_t = 0.02)]
     frame_rate: f32,
 
-    /// Speed of the GIF
+    /// Speed of the writing of the GIF
     #[arg(long, default_value_t = 10)]
     gif_speed: u8,
 
