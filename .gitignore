@@ -1,1 +1,6 @@
 /target
+*.gif
+*.png
+*.jpg
+*.mp4
+!/examples

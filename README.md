@@ -30,5 +30,5 @@ Options:
 ```
 
 ## little showcase
-![input photo](./ferris.png) (from [rusteacean.net](https://rusteacean.net))
-![photoshoot created GIF](./ferris.gif)
+![input photo](./examples/ferris.png) (from [rusteacean.net](https://rusteacean.net))
+![photoshoot created GIF](./examples/ferris.gif)
